@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revisión de Estudiantes ALNA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --azul: #1565C0;
+    --azul-medio: #1976D2;
+    --azul-claro: #E3F2FD;
+    --azul-borde: #BBDEFB;
+    --naranja: #E65100;
+    --naranja-medio: #F57C00;
+    --naranja-claro: #FFF3E0;
+    --naranja-borde: #FFE0B2;
+    --blanco: #FFFFFF;
+    --gris-bg: #F0F4F8;
+    --gris-card: #FAFAFA;
+    --gris-borde: #E0E7EF;
+    --gris-texto: #607080;
+    --verde: #2E7D32;
+    --verde-claro: #E8F5E9;
+    --texto: #1A2636;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gris-bg);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--azul) 0%, #0D47A1 100%);
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(21,101,192,.35);
+  }
+  .header-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 18px 16px 14px;
+  }
+  .header-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.6);
+    margin-bottom: 2px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    line-height: 1.15;
+  }
+  .header-title span { color: #FFB74D; }
+
+  /* ── PROGRESS SECTION ── */
+  .progress-wrap {
+    max-width: 700px;
+    margin: 16px auto 0;
+    padding: 0 12px;
+  }
+  .progress-card {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    border: 1px solid var(--gris-borde);
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  .progress-label { font-size: 12px; color: var(--gris-texto); font-weight: 500; }
+  .progress-count {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--azul);
+    line-height: 1;
+  }
+  .progress-count span { font-size: 14px; font-weight: 500; color: var(--gris-texto); }
+  .progress-pct {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--naranja);
+  }
+  .bar-bg {
+    height: 14px;
+    background: var(--gris-bg);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    background: linear-gradient(90deg, var(--azul-medio), var(--naranja-medio));
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0;
+    width: 8px; height: 100%;
+    background: rgba(255,255,255,.4);
+    border-radius: 0 7px 7px 0;
+  }
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .stat-chip {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .stat-chip .num { font-size: 20px; font-weight: 800; display: block; margin-bottom: 1px; }
+  .stat-chip.azul { background: var(--azul-claro); color: var(--azul); border: 1px solid var(--azul-borde); }
+  .stat-chip.naranja { background: var(--naranja-claro); color: var(--naranja); border: 1px solid var(--naranja-borde); }
+  .stat-chip.verde { background: var(--verde-claro); color: var(--verde); border: 1px solid #C8E6C9; }
+
+  /* ── CONTROLES ── */
+  .controles-wrap {
+    max-width: 700px;
+    margin: 12px auto 0;
+    padding: 0 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    position: relative;
+  }
+  .search-box svg {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris-texto);
+    pointer-events: none;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1.5px solid var(--gris-borde);
+    border-radius: 10px;
+    background: var(--blanco);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: var(--texto);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-box input:focus { border-color: var(--azul); }
+  .search-box input::placeholder { color: #A0AABB; }
+  .btn-ver {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--gris-borde);
+    background: var(--blanco);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gris-texto);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .btn-ver.activo {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: #fff;
+  }
+  .btn-reset {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--naranja-borde);
+    background: var(--naranja-claro);
+    color: var(--naranja);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .btn-reset:hover { background: var(--naranja); color: #fff; border-color: var(--naranja); }
+  .btn-export {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid #C8E6C9;
+    background: var(--verde-claro);
+    color: var(--verde);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .btn-export:hover { background: var(--verde); color: #fff; border-color: var(--verde); }
+
+  /* ── SECCIÓN PENDIENTES / REVISADOS ── */
+  .seccion-wrap {
+    max-width: 700px;
+    margin: 12px auto 0;
+    padding: 0 12px 100px;
+  }
+  .seccion-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gris-texto);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .seccion-titulo .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-pendiente { background: var(--naranja); }
+  .dot-revisado { background: var(--verde); }
+
+  /* ── LISTA ── */
+  .lista { display: flex; flex-direction: column; gap: 7px; }
+
+  .est-card {
+    background: var(--blanco);
+    border: 1.5px solid var(--gris-borde);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    transition: box-shadow .2s, border-color .2s;
+    cursor: default;
+  }
+  .est-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
+  .est-card.revisado {
+    background: var(--verde-claro);
+    border-color: #C8E6C9;
+  }
+
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+    background: var(--azul-claro);
+    color: var(--azul);
+  }
+  .est-card.revisado .avatar {
+    background: #C8E6C9;
+    color: var(--verde);
+  }
+
+  .est-nombre {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--texto);
+  }
+  .est-card.revisado .est-nombre { color: var(--verde); }
+
+  .est-num {
+    font-size: 10px;
+    color: var(--gris-texto);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  /* ── BOTONES MARCAR ── */
+  .btn-marcar {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-revisar {
+    background: var(--azul);
+    color: #fff;
+  }
+  .btn-revisar:hover { background: #0D47A1; transform: scale(1.04); }
+  .btn-desmarcar {
+    background: var(--naranja-claro);
+    color: var(--naranja);
+    border: 1.5px solid var(--naranja-borde);
+  }
+  .btn-desmarcar:hover { background: var(--naranja); color: #fff; }
+
+  .sin-resultados {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--gris-texto);
+    font-size: 14px;
+    background: var(--blanco);
+    border-radius: 12px;
+    border: 1.5px dashed var(--gris-borde);
+  }
+
+  /* ── GRÁFICA ── */
+  .grafica-wrap {
+    max-width: 700px;
+    margin: 20px auto 0;
+    padding: 0 12px 120px;
+  }
+  .grafica-card {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 22px 18px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    border: 1px solid var(--gris-borde);
+    text-align: center;
+  }
+  .grafica-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gris-texto);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 18px;
+  }
+  .donut-container {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto 20px;
+  }
+  .donut-container canvas { display: block; }
+  .donut-centro {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .donut-pct {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--azul);
+    line-height: 1;
+  }
+  .donut-sub {
+    font-size: 11px;
+    color: var(--gris-texto);
+    font-weight: 500;
+    margin-top: 3px;
+  }
+  .grafica-frase {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--texto);
+    margin-bottom: 4px;
+  }
+  .grafica-frase span.azul-txt { color: var(--azul); }
+  .grafica-frase span.naranja-txt { color: var(--naranja); }
+  .grafica-desc {
+    font-size: 12px;
+    color: var(--gris-texto);
+    margin-bottom: 16px;
+  }
+  .leyenda {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gris-texto);
+  }
+  .leyenda-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER FIJO ── */
+  .footer-fijo {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(135deg, var(--azul) 0%, #0D47A1 100%);
+    padding: 12px 16px;
+    text-align: center;
+    box-shadow: 0 -2px 12px rgba(0,0,0,.18);
+  }
+  .footer-fijo span {
+    color: rgba(255,255,255,.75);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .footer-fijo strong { color: #FFB74D; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-tag">Programa 2026</div>
+    <div class="header-title">Revisión de Estudiantes <span>ALNA</span></div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-card">
+    <div class="progress-top">
+      <div>
+        <div class="progress-label">Progreso de revisión</div>
+        <div class="progress-count" id="count-revisados">0 <span>/ 45 revisados</span></div>
+      </div>
+      <div class="progress-pct" id="pct-label">0%</div>
+    </div>
+    <div class="bar-bg">
+      <div class="bar-fill" id="barra" style="width:0%"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-chip azul"><span class="num" id="num-total">45</span>Total</div>
+      <div class="stat-chip naranja"><span class="num" id="num-pendientes">45</span>Pendientes</div>
+      <div class="stat-chip verde"><span class="num" id="num-rev">0</span>Revisados</div>
+    </div>
+  </div>
+</div>
+
+<div class="controles-wrap">
+  <div class="search-box">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="buscador" placeholder="Buscar por nombre..." oninput="filtrar()">
+  </div>
+  <button class="btn-ver" id="btn-todos" onclick="setVista('pendientes')">Pendientes</button>
+  <button class="btn-reset" onclick="resetear()">↺ Reset</button>
+  <button class="btn-export" onclick="exportarExcel()">⬇ Excel</button>
+</div>
+
+<div class="seccion-wrap" id="contenedor-listas"></div>
+
+<!-- GRÁFICA CIRCULAR -->
+<div class="grafica-wrap">
+  <div class="grafica-card">
+    <div class="grafica-titulo">📊 Resumen gráfico de revisión</div>
+    <div class="donut-container">
+      <canvas id="donutCanvas" width="190" height="190"></canvas>
+      <div class="donut-centro">
+        <div class="donut-pct" id="donut-pct">0%</div>
+        <div class="donut-sub">revisado</div>
+      </div>
+    </div>
+    <div class="grafica-frase" id="grafica-frase">
+      Has revisado <span class="azul-txt" id="g-rev">0</span> de <span class="naranja-txt">45</span> estudiantes
+    </div>
+    <div class="leyenda">
+      <div class="leyenda-item"><div class="leyenda-dot" style="background:#1976D2"></div>Revisados</div>
+      <div class="leyenda-item"><div class="leyenda-dot" style="background:#F57C00"></div>Pendientes</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-fijo">
+  <span>Faltan <strong id="footer-faltan">45</strong> estudiantes por revisar · ALNA 2026</span>
+</div>
+
+<script>
+const ESTUDIANTES = [
+  {id:1,  nombre:"ALLISON VALBUENA HUERTAS"},
+  {id:2,  nombre:"ANA MARIA FORERO ROJAS"},
+  {id:3,  nombre:"ANDRES SANTIAGO BONILLA"},
+  {id:4,  nombre:"ANGIE NATCIELLY BONILLA ESTUPIÑAN"},
+  {id:5,  nombre:"ARWEN CARDONA CARDOZO"},
+  {id:6,  nombre:"AYLINE FERNANDA SALINAS SALINAS"},
+  {id:7,  nombre:"CATALINA MONTAÑEZ CUELLAR"},
+  {id:8,  nombre:"DANIEL FELIPE PAEZ GUTIERREZ"},
+  {id:9,  nombre:"DANNA SOFIA DUEÑAS QUIÑONES"},
+  {id:10, nombre:"DAVID ALEJANDRO BERNAL"},
+  {id:11, nombre:"DAVID SANTIAGO GONZALEZ VARGAS"},
+  {id:12, nombre:"EDDY SANTIAGO PULIDO VARGAS"},
+  {id:13, nombre:"GABRIELA GOMEZ SUAREZ"},
+  {id:14, nombre:"GABRIELA MEDINA SALAZAR"},
+  {id:15, nombre:"GISSELLE LORENA NEIRA RINCON"},
+  {id:16, nombre:"HAIDER PALACIOS BARONA"},
+  {id:17, nombre:"ISABEL SOFIA TORRES JIMENEZ"},
+  {id:18, nombre:"ISABELLA MORENO GUERRERO"},
+  {id:19, nombre:"JHOAN SEBASTIAN VARGAS BUITRAGO"},
+  {id:20, nombre:"JOSE LUIS SANCHEZ BAEZ"},
+  {id:21, nombre:"JUAN DIEGO FLORIANO SOTELO"},
+  {id:22, nombre:"JUAN DIEGO TRUJILLO HERNANDEZ"},
+  {id:23, nombre:"JUAN FERNANDO PUERTO MENDOZA"},
+  {id:24, nombre:"JUAN FELIPE ARCOS LOPEZ"},
+  {id:25, nombre:"JUAN SEBASTIAN MARIN LOPEZ"},
+  {id:26, nombre:"JUANA MONTAÑEZ CUELLAR"},
+  {id:27, nombre:"JULIANA SOLANO MOLANO"},
+  {id:28, nombre:"KAREN LIZETH SARMIENTO SANTANA"},
+  {id:29, nombre:"LAURA SOFIA MEDINA LOPEZ"},
+  {id:30, nombre:"LINA VALENTINA GUERRERO MELO"},
+  {id:31, nombre:"MANUELA SOFIA CANTE DUARTE"},
+  {id:32, nombre:"MARIA JOSE ZAFRA BELLO"},
+  {id:33, nombre:"MARIA SOFIA VARGAS CADENA"},
+  {id:34, nombre:"MARIA VALENTINA GIL RODRIGUEZ"},
+  {id:35, nombre:"MARILYN VANESSA TRUJILLO"},
+  {id:36, nombre:"NICOLAS ALEJANDRO BARAJAS"},
+  {id:37, nombre:"NICOLAS CRUZ MALAVER"},
+  {id:38, nombre:"NICOLAS ESTEBAN GALINDO VARGAS"},
+  {id:39, nombre:"NIKOLL TATIANA ESCOBAR VILLADA"},
+  {id:40, nombre:"OSCAR JAVIER VERANO PACHON"},
+  {id:41, nombre:"PAUL ANDREY GOMEZ VACA"},
+  {id:42, nombre:"SALOME AVILA TORRES"},
+  {id:43, nombre:"THOMAS CAMILO GONZALEZ"},
+  {id:44, nombre:"VALERY ANDREA GALVIS CRUZ"},
+  {id:45, nombre:"YINETH LORENA LAGUNA SALINAS"}
+];
+
+let revisados = new Set();
+let vista = 'pendientes'; // 'pendientes' | 'todos'
+let busqueda = '';
+
+function iniciales(nombre) {
+  return nombre.split(' ').slice(0,2).map(w=>w[0]).join('');
+}
+
+function marcar(id) {
+  revisados.add(id);
+  actualizar();
+}
+
+function desmarcar(id) {
+  revisados.delete(id);
+  actualizar();
+}
+
+function setVista(v) {
+  vista = v;
+  const btn = document.getElementById('btn-todos');
+  if (v === 'todos') {
+    btn.textContent = 'Solo pendientes';
+    btn.classList.add('activo');
+  } else {
+    btn.textContent = 'Ver todos';
+    btn.classList.remove('activo');
+  }
+  renderLista();
+}
+
+function filtrar() {
+  busqueda = document.getElementById('buscador').value.toLowerCase().trim();
+  // Si hay búsqueda, mostrar todos para encontrar también los revisados
+  if (busqueda) {
+    vista = 'todos';
+    document.getElementById('btn-todos').textContent = 'Solo pendientes';
+    document.getElementById('btn-todos').classList.add('activo');
+  }
+  renderLista();
+}
+
+function resetear() {
+  if (revisados.size === 0) return;
+  if (!confirm('¿Reiniciar todos los registros de revisión?')) return;
+  revisados.clear();
+  actualizar();
+}
+
+function actualizar() {
+  const rev = revisados.size;
+  const total = ESTUDIANTES.length;
+  const pend = total - rev;
+  const pct = Math.round((rev / total) * 100);
+
+  const set  = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  const setH = (id, val) => { const el = document.getElementById(id); if(el) el.innerHTML = val; };
+  const setS = (id, p, v) => { const el = document.getElementById(id); if(el) el.style[p] = v; };
+
+  setH('count-revisados', rev + ' <span>/ ' + total + ' revisados</span>');
+  set('pct-label', pct + '%');
+  setS('barra', 'width', pct + '%');
+  set('num-pendientes', pend);
+  set('num-rev', rev);
+  set('footer-faltan', pend);
+
+  // Actualizar gráfica donut
+  const donutPct = document.getElementById('donut-pct');
+  const gRev     = document.getElementById('g-rev');
+  if (donutPct) donutPct.textContent = pct + '%';
+  if (gRev)     gRev.textContent = rev;
+  dibujarDonut(rev, total);
+
+  renderLista();
+}
+
+function renderLista() {
+  const cont = document.getElementById('contenedor-listas');
+  const busq = busqueda;
+
+  let lista = ESTUDIANTES.filter(e =>
+    e.nombre.toLowerCase().includes(busq)
+  );
+
+  if (vista === 'pendientes' && !busq) {
+    lista = lista.filter(e => !revisados.has(e.id));
+  }
+
+  const pendientes = lista.filter(e => !revisados.has(e.id));
+  const revisadosList = lista.filter(e => revisados.has(e.id));
+
+  let html = '';
+
+  // ── Pendientes ──
+  if (pendientes.length > 0) {
+    html += `<div class="seccion-titulo"><span class="dot dot-pendiente"></span>Por revisar (${pendientes.length})</div>`;
+    html += '<div class="lista">';
+    pendientes.forEach(e => {
+      html += `
+        <div class="est-card" id="card-${e.id}">
+          <div class="avatar">${iniciales(e.nombre)}</div>
+          <div style="flex:1">
+            <div class="est-nombre">${e.nombre}</div>
+            <div class="est-num">Estudiante #${e.id}</div>
+          </div>
+          <button class="btn-marcar btn-revisar" onclick="marcar(${e.id})">✔ Por revisar</button>
+        </div>`;
+    });
+    html += '</div>';
+  }
+
+  // ── Revisados (solo si hay búsqueda o vista = todos) ──
+  if (revisadosList.length > 0 && (busq || vista === 'todos')) {
+    html += `<div class="seccion-titulo" style="margin-top:18px"><span class="dot dot-revisado"></span>Ya revisados (${revisadosList.length})</div>`;
+    html += '<div class="lista">';
+    revisadosList.forEach(e => {
+      html += `
+        <div class="est-card revisado">
+          <div class="avatar">${iniciales(e.nombre)}</div>
+          <div style="flex:1">
+            <div class="est-nombre">${e.nombre}</div>
+            <div class="est-num">Estudiante #${e.id} · ✓ Revisado</div>
+          </div>
+          <button class="btn-marcar btn-desmarcar" onclick="desmarcar(${e.id})">↩ Deshacer</button>
+        </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (pendientes.length === 0 && revisadosList.length === 0) {
+    html = `<div class="sin-resultados">
+      🔍 No se encontraron estudiantes con "<strong>${busq}</strong>"
+    </div>`;
+  }
+
+  if (pendientes.length === 0 && !busq && vista === 'pendientes') {
+    html = `<div class="sin-resultados" style="border-color:#C8E6C9;background:#E8F5E9;color:#2E7D32">
+      🎉 <strong>¡Todos los estudiantes han sido revisados!</strong><br>
+      <span style="font-size:13px;opacity:.8">Toca "Ver todos" para verlos</span>
+    </div>`;
+  }
+
+  cont.innerHTML = html;
+}
+
+// Vista inicial: botón "Ver todos"
+document.getElementById('btn-todos').addEventListener('click', function() {
+  if (vista === 'pendientes') {
+    setVista('todos');
+  } else {
+    setVista('pendientes');
+  }
+});
+
+// ── EXPORTAR A EXCEL (CSV) ──────────────────────────────────────
+function exportarExcel() {
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-CO', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const hora  = ahora.toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'});
+
+  let csv = 'N°,NOMBRE ESTUDIANTE,ESTADO,FECHA REVISIÓN,HORA\n';
+  ESTUDIANTES.forEach(e => {
+    const estado = revisados.has(e.id) ? 'REVISADO' : 'PENDIENTE';
+    const fRev   = revisados.has(e.id) ? fecha : '';
+    const hRev   = revisados.has(e.id) ? hora  : '';
+    csv += `${e.id},"${e.nombre}",${estado},${fRev},${hRev}\n`;
+  });
+
+  // Resumen al final
+  csv += `\nRESUMEN,,,,\n`;
+  csv += `Total estudiantes,${ESTUDIANTES.length},,,\n`;
+  csv += `Revisados,${revisados.size},,,\n`;
+  csv += `Pendientes,${ESTUDIANTES.length - revisados.size},,,\n`;
+  csv += `Porcentaje revisado,${Math.round((revisados.size/ESTUDIANTES.length)*100)}%,,,\n`;
+  csv += `Fecha exportación,${fecha},,,\n`;
+  csv += `Hora exportación,${hora},,,\n`;
+
+  // Descargar
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `Revision_ALNA_${fecha.replace(/\//g,'-')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+// ── GRÁFICA DONUT ──────────────────────────────────────────────
+const _canvas = document.getElementById('donutCanvas');
+const _ctx = _canvas ? _canvas.getContext('2d') : null;
+const CX = 95, CY = 95, R = 80, GROSOR = 28;
+
+function dibujarDonut(rev, total) {
+  const c = document.getElementById('donutCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 190, 190);
+  const pct = total > 0 ? rev / total : 0;
+  const inicio = -Math.PI / 2;
+  const finRev = inicio + pct * 2 * Math.PI;
+
+  // Fondo naranja (pendientes)
+  ctx.beginPath();
+  ctx.arc(CX, CY, R, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#F57C00';
+  ctx.lineWidth = GROSOR;
+  ctx.lineCap = 'butt';
+  ctx.stroke();
+
+  // Azul (revisados)
+  if (pct > 0) {
+    ctx.beginPath();
+    ctx.arc(CX, CY, R, inicio, finRev);
+    ctx.strokeStyle = '#1976D2';
+    ctx.lineWidth = GROSOR;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  }
+
+  // Centro blanco
+  ctx.beginPath();
+  ctx.arc(CX, CY, R - GROSOR / 2 - 2, 0, 2 * Math.PI);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+}
+
+// Init
+actualizar();
+</script>
+</body>
+</html>
